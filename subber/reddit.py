@@ -3,7 +3,7 @@ import logging
 import praw
 import prawcore
 
-from subber import config
+from subber import config, util
 
 logger = logging.getLogger(__name__)
 
@@ -209,9 +209,13 @@ def get_sub_info(session, sub):
     """
     try:
         subreddit = session.subreddit(sub)
+        sub_age = 'Community for {}'.format(util.age_string_from_utc_epoch(subreddit.created))
 
         return {'name': subreddit.display_name_prefixed,
                 'title': subreddit.title,
-                'desc': subreddit.public_description_html}
+                'community_since': sub_age,
+                'subscribers': subreddit.subscribers,
+                'over18': subreddit.over18,
+                'desc': subreddit.public_description}
     except Exception:
         logger.debug('Unable to retrieve sub info for {}'.format(sub))
